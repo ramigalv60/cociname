@@ -23,7 +23,7 @@
   },
   "include": [
     ".eslintrc.cjs",
-    "next-env.d.ts",
+    "next-env.ds.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
