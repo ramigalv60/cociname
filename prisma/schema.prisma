@@ -11,8 +11,59 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// Define el modelo Usuario
+model Usuario {
+  id           Int       @id @default(autoincrement())
+  nombreUsuario String
+  correoElectronico String
+  contrasena    String
+  fechaRegistro DateTime
+  recetas       Receta[]
+}
+
+// Define el modelo Receta
+model Receta {
+  id               Int      @id @default(autoincrement())
+  titulo           String
+  descripcion      String
+  tiempoPreparacion Int
+  dificultad       String
+  fechaPublicacion DateTime
+  usuario          Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId        Int
+  ingredientes     Ingrediente[]
+  categorias       Categoria[]
+  videos           Video[]
+
+  @@index([usuarioId])
+}
+
+// Define el modelo Video
+model Video {
+  id              Int      @id @default(autoincrement())
+  titulo          String
+  urlVideo        String
+  duracion        Int
+  fechaPublicacion DateTime
+  receta          Receta   @relation(fields: [recetaId], references: [id])
+  recetaId        Int
+
+  @@index([recetaId])
+}
+
+// Define el modelo Ingrediente
+model Ingrediente {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  cantidad       Int
+  unidadMedida   String
+  recetas        Receta[]
+}
+
+// Define el modelo Categoria
+model Categoria {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  recetas     Receta[]
 }
