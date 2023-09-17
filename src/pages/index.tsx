@@ -3,8 +3,8 @@ import Link from "next/link";
 
 import { api } from "~/utils/api";
 
-export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+export default function Home(props) {
+  const hello = api.indexRouter.hello.useQuery({ text: "from tRPC" });
 
   return (
     <>
