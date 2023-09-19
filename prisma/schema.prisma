@@ -11,16 +11,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Define el modelo Usuario
-model Usuario {
-  id           Int       @id @default(autoincrement())
-  nombreUsuario String
-  correoElectronico String
-  contrasena    String
-  fechaRegistro DateTime
-  recetas       Receta[]
-}
-
 // Define el modelo Receta
 model Receta {
   id               Int      @id @default(autoincrement())
@@ -29,13 +19,11 @@ model Receta {
   tiempoPreparacion Int
   dificultad       String
   fechaPublicacion DateTime
-  usuario          Usuario  @relation(fields: [usuarioId], references: [id])
-  usuarioId        Int
   ingredientes     Ingrediente[]
   categorias       Categoria[]
   videos           Video[]
-
-  @@index([usuarioId])
+  imagen           String
+  
 }
 
 // Define el modelo Video
@@ -55,6 +43,7 @@ model Video {
 model Ingrediente {
   id             Int      @id @default(autoincrement())
   nombre         String
+  imagen         String
   cantidad       Int
   unidadMedida   String
   recetas        Receta[]
@@ -64,6 +53,6 @@ model Ingrediente {
 model Categoria {
   id          Int      @id @default(autoincrement())
   nombre      String
-  descripcion String
+  imagen      String
   recetas     Receta[]
 }
