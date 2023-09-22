@@ -43,9 +43,8 @@ model Video {
 model Ingrediente {
   id             Int      @id @default(autoincrement())
   nombre         String
-  imagen         String
-  cantidad       Int
-  unidadMedida   String
+  cantidad       Int?     @default(1)
+  unidadMedida   String?  @default("unidad")
   recetas        Receta[]
 }
 
@@ -53,6 +52,6 @@ model Ingrediente {
 model Categoria {
   id          Int      @id @default(autoincrement())
   nombre      String
-  imagen      String
+  imagen      String?
   recetas     Receta[]
 }
