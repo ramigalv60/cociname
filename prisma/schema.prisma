@@ -13,17 +13,18 @@ generator client {
 
 // Define el modelo Receta
 model Receta {
-  id               Int      @id @default(autoincrement())
-  titulo           String
-  descripcion      String
-  tiempoPreparacion Int
-  dificultad       String
-  fechaPublicacion DateTime
-  ingredientes     Ingrediente[]
-  categorias       Categoria[]
-  videos           Video[]
-  imagen           String
-  
+  id                 Int      @id @default(autoincrement())
+  titulo             String
+  descripcion        String
+  tiempoPreparacion  Int
+  dificultad         Dificultad
+  fechaPublicacion   DateTime
+  ingredientes       String
+  cantIngredientes   String
+  unidadIngredientes Unidad
+  categorias         Categoria[]
+  videos             Video[]
+  imagen             String
 }
 
 // Define el modelo Video
@@ -39,19 +40,32 @@ model Video {
   @@index([recetaId])
 }
 
-// Define el modelo Ingrediente
-model Ingrediente {
-  id             Int      @id @default(autoincrement())
-  nombre         String
-  cantidad       Int?     @default(1)
-  unidadMedida   String?  @default("unidad")
-  recetas        Receta[]
+model Categoria{
+  id Int @id @default(autoincrement())
+  nombre String
+  recetas Receta[]
 }
 
-// Define el modelo Categoria
-model Categoria {
-  id          Int      @id @default(autoincrement())
-  nombre      String
-  imagen      String?
-  recetas     Receta[]
+//model Comentario{
+  //id Int @id @default(autoincrement())
+  //texto String
+  //fecha DateTime
+  //receta Receta @relation(fields: [recetaId], references: [id])
+  //recetaId Int
+
+  //@@index([recetaId])
+//}
+
+enum Dificultad{
+  Facil
+  Medio
+  Dificil
+}
+
+enum Unidad{
+  gr
+  ml
+  kg
+  l
+  unidad
 }
