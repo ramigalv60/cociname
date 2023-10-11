@@ -22,9 +22,13 @@ model Receta {
   ingredientes       String
   cantIngredientes   String
   unidadIngredientes Unidad
-  categorias         Categoria[]
+  categorias         Categoria @relation(fields: [categoriaId], references: [id])
   videos             Video[]
   imagen             String
+  categoriaId        Int
+
+  @@index([categoriaId])
+
 }
 
 // Define el modelo Video
@@ -43,7 +47,8 @@ model Video {
 model Categoria{
   id Int @id @default(autoincrement())
   nombre String
-  recetas Receta[]
+  recetas Receta  []  
+
 }
 
 //model Comentario{

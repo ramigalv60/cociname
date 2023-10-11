@@ -82,7 +82,7 @@ export const indexRouter = createTRPCRouter({
     cantIngredientes: z.string(),
     unidadIngredientes: z.enum(["gr", "ml", "kg", "l", "unidad"]),
     imagen: z.string(), 
-    categoria: z.string(),
+    categoria: z.number(),
     videos: z.string(), 
   })).query(({ ctx, input }) => {
       return ctx.prisma.receta.create({
@@ -96,9 +96,9 @@ export const indexRouter = createTRPCRouter({
           cantIngredientes: input.cantIngredientes,
           unidadIngredientes: input.unidadIngredientes,
           imagen: input.imagen,
-          //categorias: {
-            //connect: { nombre: input.categoria },
-          //},
+          categorias: {
+            connect: { id: input.categoria },
+          },
           videos: {
             connect: { id: parseInt(String(input.videos)) },
           },
@@ -141,7 +141,7 @@ export const indexRouter = createTRPCRouter({
       cantIngredientes: z.string(),
       unidadIngredientes: z.enum(["gr", "ml", "kg", "l", "unidad"]),
       imagen: z.string(), 
-      categoria: z.string(),
+      categoria: z.number(),
       videos: z.string(), 
     })).query(({ ctx, input }) => {
       return ctx.prisma.receta.update({
@@ -156,9 +156,9 @@ export const indexRouter = createTRPCRouter({
           cantIngredientes: input.cantIngredientes,
           unidadIngredientes: input.unidadIngredientes,
           imagen: input.imagen,
-          //categorias: {
-            //connect: { nombre: input.categoria },
-          //},
+          categorias: {
+            connect: { id: input.categoria },
+          },
           videos: {
             connect: { id: parseInt(String(input.videos)) },
           },
