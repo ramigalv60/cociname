@@ -1,9 +1,47 @@
 import Head from "next/head";
 import Link from "next/link";
-
+import { useRouter } from "next/router";
+import React, { useState } from 'react';
 import { api } from "~/utils/api";
+import { format } from 'date-fns';
 
 export default function Home(props) {
+    /*const router = useRouter();
+
+    type FormState = {
+      titulo: string,
+      urlVideo: string,
+      duracion: number,
+      fechaPublicacion: string,
+      receta: number,
+    };
+
+    const [form, setForm] = useState<FormState>({titulo: '', urlVideo: '', duracion: 0, fechaPublicacion: '01/01/2000', receta: 0});
+    
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = event.target;
+
+      setForm((prevForm) => ({
+        ...prevForm,
+        [name]: value,
+      }));
+    };
+
+    const mutation = api.router.crearVideo.useMutation();
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      const Video = {
+        titulo: form.titulo,
+        urlVideo: form.urlVideo,
+        duracion: form.duracion,
+        fechaPublicacion: form.fechaPublicacion,
+        receta: form.receta
+      }
+      
+      mutation.mutate(Video);
+    }
+    */
   return (
     <>
       <Head>
@@ -12,6 +50,14 @@ export default function Home(props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        {/*<form onSubmit={handleSubmit}>
+            <input required name="titulo" value={form.titulo} onChange={handleInputChange} placeholder="Video"/>
+            <input required name="urlVideo" value={form.urlVideo} onChange={handleInputChange} placeholder="Video"/>
+            <input required name="duracion" value={form.duracion} onChange={handleInputChange} placeholder="Video"/>
+            <input required name="fechaPublicación" value={form.fechaPublicacion} onChange={handleInputChange} placeholder="Video"/>
+            <button type="submit">Enviar</button>
+
+  </form>*/}
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Create <span className="text-[hsl(280,100%,70%)]">T3</span> App

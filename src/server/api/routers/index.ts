@@ -56,13 +56,13 @@ export const indexRouter = createTRPCRouter({
 
   crearVideo: publicProcedure.input(z.object({
     titulo: z.string(),
-    url: z.string(),
+    urlVideo: z.string(),
     receta: z.number(),
-  })).query(({ ctx, input }) => {
-      return ctx.prisma.video.create({
+  })).mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.video.create({
         data: {
           titulo: input.titulo,
-          urlVideo: input.url,
+          urlVideo: input.urlVideo,
           receta: {
             connect: { id: parseInt(String(input.receta)) },
           },
@@ -84,7 +84,7 @@ export const indexRouter = createTRPCRouter({
     imagen: z.string(), 
     categoria: z.number(),
     videos: z.string(), 
-  })).query(({ ctx, input }) => {
+  })).mutation(async ({ ctx, input }) => {
       return ctx.prisma.receta.create({
         data: {
           titulo: input.titulo,
@@ -117,12 +117,12 @@ export const indexRouter = createTRPCRouter({
       });
     }),
 
-    actualizarVideo: publicProcedure.input(z.object({ id: z.number(), titulo: z.string(), url: z.string(), receta: z.number() })).query(({ ctx, input }) => {
+    actualizarVideo: publicProcedure.input(z.object({ id: z.number(), titulo: z.string(), urlVideo: z.string(), receta: z.number() })).query(({ ctx, input }) => {
       return ctx.prisma.video.update({
         where: {id: input.id},
         data: {
           titulo: input.titulo,
-          urlVideo: input.url,
+          urlVideo: input.urlVideo,
           receta: {
             connect: { id: parseInt(String(input.receta)) },
           },
