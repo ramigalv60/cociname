@@ -19,16 +19,27 @@ model Receta {
   tiempoPreparacion  Int
   dificultad         Dificultad
   fechaPublicacion   DateTime
-  ingredientes       String
-  cantIngredientes   String
-  unidadIngredientes Unidad
+  ingredientes       Ingrediente[]
   categorias         Categoria @relation(fields: [categoriaId], references: [id])
   videos             Video[]
+  comentarios        Comentario[]
   imagen             String
   categoriaId        Int
 
   @@index([categoriaId])
 
+}
+
+//Define model Ingrediente
+model Ingrediente{
+  id Int @id @default(autoincrement())
+  nombre String
+  cantidad Int
+  unidad Unidad
+  receta Receta @relation(fields: [recetaId], references: [id])
+  recetaId Int
+
+  @@index([recetaId])
 }
 
 // Define el modelo Video
@@ -51,15 +62,15 @@ model Categoria{
 
 }
 
-//model Comentario{
-  //id Int @id @default(autoincrement())
-  //texto String
-  //fecha DateTime
-  //receta Receta @relation(fields: [recetaId], references: [id])
-  //recetaId Int
+model Comentario{
+  id Int @id @default(autoincrement())
+  texto String
+  fecha DateTime
+  receta Receta @relation(fields: [recetaId], references: [id])
+  recetaId Int
 
-  //@@index([recetaId])
-//}
+  @@index([recetaId])
+}
 
 enum Dificultad{
   Facil
