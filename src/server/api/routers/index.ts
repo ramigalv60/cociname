@@ -1,187 +1,119 @@
 import { z } from "zod";
-
 import { PrismaClient, Categoria } from "@prisma/client";
-
-type CategoriaWhereUniqueInput = Pick<Categoria, "nombre">;
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { Router } from "@trpc/server";
+import { query } from "@trpc/server";
+import { merge } from "@trpc/server";
 
 const prisma = new PrismaClient();
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+type CategoriaWhereUniqueInput = Pick<Categoria, "nombre">;
 
 const dificultad = z.enum(["Fácil", "Medio", "Difícil"]);
 
 const unidad = z.enum(["g", "kg", "ml", "l", "unidades"]);
 
-export const indexRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
-//Todas las funciones para buscar elementos de la base de datos
-  obtenerCategorias: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.categoria.findMany();
+// Define the schemas using zod
+const recipeSchema = z.object({
+  id: z.number(),
+  titulo: z.string(),
+  descripcion: z.string(),
+  tiempoPreparacion: z.number(),
+  dificultad: z.nativeEnum({
+    Fácil: "Fácil",
+    Medio: "Medio",
+    Difícil: "Difícil",
   }),
-
-  obtenerRecetas: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.receta.findMany();
-  }),
-
-  buscarReceta: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-      return ctx.prisma.receta.findFirst({
-        where: {
-          titulo: input,},
-        });
+  fechaPublicacion: z.date(),
+  ingredientes: z.array(
+    z.object({
+      id: z.number(),
+      nombre: z.string(),
+      cantidad: z.number(),
+      unidad: z.nativeEnum({
+        g: "g", 
+        kg: "kg", 
+        ml: "ml", 
+        l: "l", 
+        unidades: "unidades"
       }),
-
-  obtenerRecetasPorCategoria: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-      return ctx.prisma.categoria.findMany({
-        where: {
-          nombre: input,
-        },
-      });
-    }),
-
-  //Todas las funciones para crear elementos en la base de datos
-  crearCategoria: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-      return ctx.prisma.categoria.create({
-        data: {
-          nombre: input    
-        },
-      })
-    }),
-
-  crearVideo: publicProcedure.input(z.object({
-    titulo: z.string(),
-    urlVideo: z.string(),
-    receta: z.number(),
-  })).mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.video.create({
-        data: {
-          titulo: input.titulo,
-          urlVideo: input.urlVideo,
-          receta: {
-            connect: { id: parseInt(String(input.receta)) },
-          },
-          duracion: 0,
-          fechaPublicacion: new Date(),
-        },
-      });
-    }),
-    
-  crearReceta: publicProcedure.input(z.object({ 
-    titulo: z.string(), 
-    descripcion: z.string(),
-    tiempoPreparacion: z.number(),
-    dificultad: z.enum(["Facil", "Medio", "Dificil"]),
-    fechaPublicacion: z.date(),
-    ingredientes: z.string(), 
-    cantIngredientes: z.string(),
-    unidadIngredientes: z.enum(["gr", "ml", "kg", "l", "unidad"]),
-    imagen: z.string(), 
-    categoria: z.number(),
-    videos: z.string(), 
-  })).mutation(async ({ ctx, input }) => {
-      return ctx.prisma.receta.create({
-        data: {
-          titulo: input.titulo,
-          descripcion: input.descripcion,
-          tiempoPreparacion: input.tiempoPreparacion,
-          dificultad: input.dificultad,
-          fechaPublicacion: input.fechaPublicacion,
-          ingredientes: input.ingredientes,
-          cantIngredientes: input.cantIngredientes,
-          unidadIngredientes: input.unidadIngredientes,
-          imagen: input.imagen,
-          categorias: {
-            connect: { id: input.categoria },
-          },
-          videos: {
-            connect: { id: parseInt(String(input.videos)) },
-          },
-        },
-      });
-    }),
-
-    //Todas las funciones para actualizar elementos en la base de datos
-
-    actualizarCategoria: publicProcedure.input(z.object({ id: z.number(), nombre: z.string() })).query(({ ctx, input }) => {
-      return ctx.prisma.categoria.update({
-        where: {id: input.id},
-        data: {
-          nombre: input.nombre,
-        },
-      });
-    }),
-
-    actualizarVideo: publicProcedure.input(z.object({ id: z.number(), titulo: z.string(), urlVideo: z.string(), receta: z.number() })).query(({ ctx, input }) => {
-      return ctx.prisma.video.update({
-        where: {id: input.id},
-        data: {
-          titulo: input.titulo,
-          urlVideo: input.urlVideo,
-          receta: {
-            connect: { id: parseInt(String(input.receta)) },
-          },
-        },
-      });
-    }),
-      
-    actualizarReceta: publicProcedure.input(z.object({ 
-      id: z.number(), 
-      titulo: z.string(), 
-      descripcion: z.string(),
-      tiempoPreparacion: z.number(),
-      dificultad: z.enum(["Facil", "Medio", "Dificil"]),
+      recetaId: z.number(),
+    })
+  ),
+  categorias: z.object({
+    id: z.number(),
+    nombre: z.string(),
+  }),
+  videos: z.array(
+    z.object({
+      id: z.number(),
+      titulo: z.string(),
+      urlVideo: z.string(),
+      duracion: z.number(),
       fechaPublicacion: z.date(),
-      ingredientes: z.string(), 
-      cantIngredientes: z.string(),
-      unidadIngredientes: z.enum(["gr", "ml", "kg", "l", "unidad"]),
-      imagen: z.string(), 
-      categoria: z.number(),
-      videos: z.string(), 
-    })).query(({ ctx, input }) => {
-      return ctx.prisma.receta.update({
-        where: {id: input.id},
-        data: {
-          titulo: input.titulo,
-          descripcion: input.descripcion,
-          tiempoPreparacion: input.tiempoPreparacion,
-          dificultad: input.dificultad,
-          fechaPublicacion: input.fechaPublicacion,
-          ingredientes: input.ingredientes,
-          cantIngredientes: input.cantIngredientes,
-          unidadIngredientes: input.unidadIngredientes,
-          imagen: input.imagen,
+      recetaId: z.number(),
+    })
+  ),
+  comentarios: z.array(
+    z.object({
+      id: z.number(),
+      texto: z.string(),
+      fecha: z.date(),
+      recetaId: z.number(),
+    })
+  ),
+  imagen: z.string(),
+  categoriaId: z.number(),
+});
+
+export const indexRouter = createTRPCRouter({})
+
+  .merge(
+    query('hello', {
+      input: z.object({ text: z.string() }),
+      resolve: ({ input }) => {
+        return {
+          greeting: `Hello ${input.text}`,
+        };
+      },
+    }),
+    query('obtenerCategorias', {
+      resolve: async ({ ctx }) => {
+        return await ctx.prisma.categoria.findMany();
+      },
+    }),
+    query('obtenerRecetas', {
+      resolve: async ({ ctx }) => {
+        return await ctx.prisma.receta.findMany();
+      },
+    })
+  );
+  .query('obtenerRecetas', {
+    resolve: async ({ ctx }) => {
+      return await ctx.prisma.receta.findMany();
+    },
+  })
+  .query('buscarReceta', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await ctx.prisma.receta.findFirst({
+        where: {
+          titulo: input,
+        },
+      });
+    },
+  })
+  .query('obtenerRecetasPorCategoria', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await ctx.prisma.receta.findMany({
+        where: {
           categorias: {
-            connect: { id: input.categoria },
-          },
-          videos: {
-            connect: { id: parseInt(String(input.videos)) },
+            some: {
+              nombre: input,
+            },
           },
         },
       });
-    }),
-
-    //Todas las funciones para eliminar elementos en la base de datos
-    eliminarReceta: publicProcedure.input(z.number()).query(({ ctx, input }) => {
-      return ctx.prisma.receta.delete({
-        where: {id: input},
-      });
-    }),
-
-    eliminarVideo: publicProcedure.input(z.number()).query(({ ctx, input }) => {
-      return ctx.prisma.video.delete({
-        where: {id: input},
-      });
-    }),
-
-    eliminarCategoria: publicProcedure.input(z.number()).query(({ ctx, input }) => {
-      return ctx.prisma.categoria.delete({
-        where: {id: input},
-      });
-    }),
+    },
   });
