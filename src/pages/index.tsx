@@ -1,11 +1,16 @@
+import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from 'react';
 import { api } from "~/utils/api";
-import { format } from 'date-fns';
 
 export default function Home(props) {
+  const user = useUser();
+
+  const { data } = api.recipes.getRecipes.useQuery();
+
   return (
     <>
       <Head>

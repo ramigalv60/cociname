@@ -2,8 +2,6 @@ import { z } from "zod";
 import { PrismaClient, Categoria } from "@prisma/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { Router } from "@trpc/server";
-import { query } from "@trpc/server";
-import { merge } from "@trpc/server";
 
 const prisma = new PrismaClient();
 
@@ -13,7 +11,7 @@ const dificultad = z.enum(["Fácil", "Medio", "Difícil"]);
 
 const unidad = z.enum(["g", "kg", "ml", "l", "unidades"]);
 
-// Define the schemas using zod
+// Define the recipe schema using zod
 const recipeSchema = z.object({
   id: z.number(),
   titulo: z.string(),
@@ -66,54 +64,45 @@ const recipeSchema = z.object({
   categoriaId: z.number(),
 });
 
-export const indexRouter = createTRPCRouter({})
+// Define the ingredient schema using zod
+const ingredientSchema = z.object({
+  id: z.number(),
+  nombre: z.string(),
+  cantidad: z.number(),
+  unidad: z.nativeEnum({
+    g: "g", 
+    kg: "kg", 
+    ml: "ml", 
+    l: "l", 
+    unidades: "unidades"
+  }),
+  recetaId: z.number(),
+});
 
-  .merge(
-    query('hello', {
-      input: z.object({ text: z.string() }),
-      resolve: ({ input }) => {
-        return {
-          greeting: `Hello ${input.text}`,
-        };
+// Define the category schema using zod
+const categorySchema = z.object({
+  id: z.number(),
+  nombre: z.string(),
+});
+
+// Define the video schema using zod
+const videoSchema = z.object({
+  id: z.number(),
+  titulo: z.string(),
+  urlVideo: z.string(),
+  duracion: z.number(),
+  fechaPublicacion: z.date(),
+  recetaId: z.number(),
+});
+
+export const recipesRouter = createTRPCRouter({
+  getRecipes: publicProcedure.query(({ ctx }) => {
+    return prisma.receta.findMany({
+      include: {
+        videos: true,
+        imagen: true,
       },
-    }),
-    query('obtenerCategorias', {
-      resolve: async ({ ctx }) => {
-        return await ctx.prisma.categoria.findMany();
-      },
-    }),
-    query('obtenerRecetas', {
-      resolve: async ({ ctx }) => {
-        return await ctx.prisma.receta.findMany();
-      },
-    })
-  );
-  .query('obtenerRecetas', {
-    resolve: async ({ ctx }) => {
-      return await ctx.prisma.receta.findMany();
-    },
-  })
-  .query('buscarReceta', {
-    input: z.string(),
-    resolve: async ({ ctx, input }) => {
-      return await ctx.prisma.receta.findFirst({
-        where: {
-          titulo: input,
-        },
-      });
-    },
-  })
-  .query('obtenerRecetasPorCategoria', {
-    input: z.string(),
-    resolve: async ({ ctx, input }) => {
-      return await ctx.prisma.receta.findMany({
-        where: {
-          categorias: {
-            some: {
-              nombre: input,
-            },
-          },
-        },
-      });
-    },
-  });
+    });
+  }),
+  
+});
