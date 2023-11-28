@@ -34,6 +34,11 @@ export default function Home(props) {
                 Just the basics - Everything you need to know to set up your
                 database and authentication.
               </div>
+              <div className="flex flex-col">
+                {Array.isArray(data) ? data.map((recipe) => (
+                  <div key={recipe.id}>{recipe.title}</div>
+                )): null}
+              </div>
             </Link>
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"

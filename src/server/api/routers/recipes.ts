@@ -96,12 +96,14 @@ const videoSchema = z.object({
 });
 
 export const recipesRouter = createTRPCRouter({
-  getRecipes: publicProcedure.query(({ ctx }) => {
-    return prisma.receta.findMany({
+  getRecipes: publicProcedure.query(async ({ ctx }) => {
+    const recipes = await ctx.prisma.receta.findMany({
       include: {
         videos: true,
         imagen: true,
       },
+
+      
     });
   }),
   
