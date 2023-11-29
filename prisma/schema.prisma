@@ -16,6 +16,7 @@ model Receta {
   id                 Int      @id @default(autoincrement())
   titulo             String
   descripcion        String
+  contenido          String   @db.VarChar(10000)
   tiempoPreparacion  Int
   dificultad         Dificultad
   fechaPublicacion   DateTime
