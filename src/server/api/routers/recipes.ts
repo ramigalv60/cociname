@@ -47,11 +47,12 @@ const recipeSchema = z.object({
       fechaPublicacion: z.date(),
       recetaId: z.number(),
     }),
-  imagen: z.object({
+  imagen: z.array(
+    z.object({
     id: z.number(),
     urlImagen: z.string(),
     recetaId: z.number(),
-  }),
+  })),
   categoriaId: z.number(),
 });
 
@@ -134,6 +135,20 @@ export const getRecetaBySearch = createTRPCRouter({
   }),
 });
 
+export const getRecetaByCategory = createTRPCRouter({
+  getRecetaByCategory: publicProcedure.query(async ({ ctx, input }) => {
+    const recipe = await ctx.prisma.receta.findMany({
+      where: { categoriaId: input },
+      include: {
+        videos: true,
+        imagen: true,
+        categoria: true,
+      },
+    });
+    return recipe;
+   }),
+  });
+
 export const createReceta = createTRPCRouter({
   createReceta: publicProcedure.input(recipeSchema)
   .mutation(async ({ ctx, input }) => {
@@ -160,6 +175,46 @@ export const createReceta = createTRPCRouter({
           create: input.imagen,
         },
       },
+    });
+  }),
+});
+
+export const updateReceta = createTRPCRouter({
+  updateReceta: publicProcedure.input(recipeSchema)
+  .mutation(async ({ ctx, input }) => {
+    const recipe = await ctx.prisma.receta.update({
+      where: { id: input.id },
+      data: {
+        titulo: input.titulo,
+        descripcion: input.descripcion,
+        contenido: input.contenido,
+        tiempoPreparacion: input.tiempoPreparacion,
+        dificultad: input.dificultad,
+        fechaPublicacion: input.fechaPublicacion,
+        ingredientes: {
+          create: input.ingredientes,
+        },
+        categoria: {
+          connect: {
+            id: input.categoriaId,
+          },
+        },
+        videos: {
+          create: input.videos,
+        },
+        imagen: {
+          create: input.imagen,
+        },
+      },
+    });
+  }),
+});
+
+export const deleteReceta = createTRPCRouter({
+  deleteReceta: publicProcedure.input(recipeSchema)
+  .mutation(async ({ ctx, input }) => {
+    const recipe = await ctx.prisma.receta.delete({
+      where: { id: input.id },
     });
   }),
 });
