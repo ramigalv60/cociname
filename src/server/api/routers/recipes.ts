@@ -91,7 +91,7 @@ const videoSchema = z.object({
   recetaId: z.number(),
 });
 
-const getRecetas = createTRPCRouter({
+export const getRecetas = createTRPCRouter({
   getRecipes: publicProcedure.query(async ({ ctx }) => {
     const recipes = await ctx.prisma.receta.findMany({
       include: {
@@ -102,25 +102,25 @@ const getRecetas = createTRPCRouter({
   }),
 });
 
-const getVideos = createTRPCRouter({
+export const getVideos = createTRPCRouter({
   getVideos: publicProcedure.query(async ({ ctx }) => {
     const videos = await ctx.prisma.video.findMany();
   }),
 });
 
-const getIngredientes = createTRPCRouter({
+export const getIngredientes = createTRPCRouter({
   getIngredients: publicProcedure.query(async ({ ctx }) => {
     const ingredients = await ctx.prisma.ingrediente.findMany();
   }),
 });
 
-const getCategorias = createTRPCRouter({
+export const getCategorias = createTRPCRouter({
   getCategories: publicProcedure.query(async ({ ctx }) => {
     const categories = await ctx.prisma.categoria.findMany();
   }),
 });
 
-const getRecetaBySearch = createTRPCRouter({
+export const getRecetaBySearch = createTRPCRouter({
   getRecipeBySearch: publicProcedure.query(async ({ ctx, input }) => {
     const recipe = await ctx.prisma.receta.findUnique({
       where: { id: input },
@@ -133,7 +133,7 @@ const getRecetaBySearch = createTRPCRouter({
   }),
 });
 
-const createReceta = createTRPCRouter({
+export const createReceta = createTRPCRouter({
   mutations: {
     createRecipe: {
       input: recipeSchema,

@@ -1,4 +1,5 @@
-import { recipesRouter } from "./routers/Recipes";
+import { get } from "http";
+import { getRecetas, getCategorias, getIngredientes, getVideos, getRecetaBySearch, createReceta } from "./routers/recipes";
 import { createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -7,7 +8,12 @@ import { createTRPCRouter } from "~/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  recipes: recipesRouter,
+  recetas: getRecetas,
+  categorias: getCategorias,
+  ingredientes: getIngredientes,
+  videos: getVideos,
+  recetaBySearch: getRecetaBySearch,
+  createReceta: createReceta
 });
 
 // export type definition of API
