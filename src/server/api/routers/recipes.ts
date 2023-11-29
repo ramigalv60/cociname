@@ -2,14 +2,10 @@ import { z } from "zod";
 import { PrismaClient, Categoria } from "@prisma/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { Router } from "@trpc/server";
+import { v2 as cloudinary } from "cloudinary";
+import { TRPCError } from '@trpc/server';
 
 const prisma = new PrismaClient();
-
-type CategoriaWhereUniqueInput = Pick<Categoria, "nombre">;
-
-const dificultad = z.enum(["Fácil", "Medio", "Difícil"]);
-
-const unidad = z.enum(["g", "kg", "ml", "l", "unidades"]);
 
 // Define the recipe schema using zod
 const recipeSchema = z.object({
@@ -95,16 +91,68 @@ const videoSchema = z.object({
   recetaId: z.number(),
 });
 
-export const recipesRouter = createTRPCRouter({
+const getRecetas = createTRPCRouter({
   getRecipes: publicProcedure.query(async ({ ctx }) => {
     const recipes = await ctx.prisma.receta.findMany({
       include: {
         videos: true,
         imagen: true,
       },
-
-      
     });
   }),
-  
+});
+
+const getVideos = createTRPCRouter({
+  getVideos: publicProcedure.query(async ({ ctx }) => {
+    const videos = await ctx.prisma.video.findMany();
+  }),
+});
+
+const getIngredientes = createTRPCRouter({
+  getIngredients: publicProcedure.query(async ({ ctx }) => {
+    const ingredients = await ctx.prisma.ingrediente.findMany();
+  }),
+});
+
+const getCategorias = createTRPCRouter({
+  getCategories: publicProcedure.query(async ({ ctx }) => {
+    const categories = await ctx.prisma.categoria.findMany();
+  }),
+});
+
+const getRecetaBySearch = createTRPCRouter({
+  getRecipeBySearch: publicProcedure.query(async ({ ctx, input }) => {
+    const recipe = await ctx.prisma.receta.findUnique({
+      where: { id: input },
+      include: {
+        videos: true,
+        imagen: true,
+        categorias: true,
+      },
+    });
+  }),
+});
+
+const createReceta = createTRPCRouter({
+  mutations: {
+    createRecipe: {
+      input: recipeSchema,
+      resolve: async ({ input, ctx }) => {
+        const { titulo, descripcion } = input;
+
+        const recipe = await ctx.prisma.receta.create({
+          data: { titulo, descripcion },
+        });
+
+        if (!recipe) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to create recipe',
+          });
+        }
+
+        return recipe;
+      },
+    },
+  },
 });
