@@ -13,50 +13,44 @@ const recipeSchema = z.object({
   titulo: z.string(),
   descripcion: z.string(),
   tiempoPreparacion: z.number(),
-  dificultad: z.nativeEnum({
-    Fácil: "Fácil",
-    Medio: "Medio",
-    Difícil: "Difícil",
-  }),
+  dificultad: z.enum([
+    "Facil",
+    "Medio",
+    "Dificil",
+  ]),
   fechaPublicacion: z.date(),
   ingredientes: z.array(
     z.object({
       id: z.number(),
       nombre: z.string(),
       cantidad: z.number(),
-      unidad: z.nativeEnum({
-        g: "g", 
-        kg: "kg", 
-        ml: "ml", 
-        l: "l", 
-        unidades: "unidades"
-      }),
+      unidad: z.enum([
+        "gr", 
+        "kg", 
+        "ml", 
+        "l", 
+        "unidad"
+      ]),
       recetaId: z.number(),
     })
   ),
-  categorias: z.object({
+  categoria: z.object({
     id: z.number(),
     nombre: z.string(),
   }),
-  videos: z.array(
-    z.object({
+  videos: z.object({
       id: z.number(),
       titulo: z.string(),
       urlVideo: z.string(),
       duracion: z.number(),
       fechaPublicacion: z.date(),
       recetaId: z.number(),
-    })
-  ),
-  comentarios: z.array(
-    z.object({
-      id: z.number(),
-      texto: z.string(),
-      fecha: z.date(),
-      recetaId: z.number(),
-    })
-  ),
-  imagen: z.string(),
+    }),
+  imagen: z.object({
+    id: z.number(),
+    urlImagen: z.string(),
+    recetaId: z.number(),
+  }),
   categoriaId: z.number(),
 });
 
@@ -99,24 +93,29 @@ export const getRecetas = createTRPCRouter({
         imagen: true,
       },
     });
+
+    return recipes;
   }),
 });
 
 export const getVideos = createTRPCRouter({
   getVideos: publicProcedure.query(async ({ ctx }) => {
     const videos = await ctx.prisma.video.findMany();
+    return videos; 
   }),
 });
 
 export const getIngredientes = createTRPCRouter({
   getIngredients: publicProcedure.query(async ({ ctx }) => {
     const ingredients = await ctx.prisma.ingrediente.findMany();
+    return ingredients;
   }),
 });
 
 export const getCategorias = createTRPCRouter({
   getCategories: publicProcedure.query(async ({ ctx }) => {
     const categories = await ctx.prisma.categoria.findMany();
+    return categories;
   }),
 });
 
@@ -127,32 +126,38 @@ export const getRecetaBySearch = createTRPCRouter({
       include: {
         videos: true,
         imagen: true,
-        categorias: true,
+        categoria: true,
       },
     });
+    return recipe;
   }),
 });
 
 export const createReceta = createTRPCRouter({
-  mutations: {
-    createRecipe: {
-      input: recipeSchema,
-      resolve: async ({ input, ctx }) => {
-        const { titulo, descripcion } = input;
-
-        const recipe = await ctx.prisma.receta.create({
-          data: { titulo, descripcion },
-        });
-
-        if (!recipe) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Failed to create recipe',
-          });
-        }
-
-        return recipe;
+  createReceta: publicProcedure.input(recipeSchema)
+  .mutation(async ({ ctx, input }) => {
+    const recipe = await ctx.prisma.receta.create({
+      data: {
+        titulo: input.titulo,
+        descripcion: input.descripcion,
+        tiempoPreparacion: input.tiempoPreparacion,
+        dificultad: input.dificultad,
+        fechaPublicacion: input.fechaPublicacion,
+        ingredientes: {
+          create: input.ingredientes,
+        },
+        categoria: {
+          connect: {
+            id: input.categoriaId,
+          },
+        },
+        videos: {
+          create: input.videos,
+        },
+        imagen: {
+          create: input.imagen,
+        },
       },
-    },
-  },
+    });
+  }),
 });
