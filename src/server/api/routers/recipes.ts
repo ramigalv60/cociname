@@ -12,6 +12,7 @@ const recipeSchema = z.object({
   id: z.number(),
   titulo: z.string(),
   descripcion: z.string(),
+  contenido: z.string(),
   tiempoPreparacion: z.number(),
   dificultad: z.enum([
     "Facil",
@@ -140,6 +141,7 @@ export const createReceta = createTRPCRouter({
       data: {
         titulo: input.titulo,
         descripcion: input.descripcion,
+        contenido: input.contenido,
         tiempoPreparacion: input.tiempoPreparacion,
         dificultad: input.dificultad,
         fechaPublicacion: input.fechaPublicacion,
