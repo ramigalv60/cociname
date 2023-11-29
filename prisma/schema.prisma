@@ -15,8 +15,8 @@ generator client {
 model Receta {
   id                 Int      @id @default(autoincrement())
   titulo             String
-  descripcion        String
-  contenido          String   @db.VarChar(10000)
+  descripcion        String   @db.VarChar(5000)
+  contenido          String   @db.Text
   tiempoPreparacion  Int
   dificultad         Dificultad
   fechaPublicacion   DateTime
