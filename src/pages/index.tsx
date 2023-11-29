@@ -9,7 +9,7 @@ import { api } from "~/utils/api";
 export default function Home(props) {
   const user = useUser();
 
-  const { data } = api.recipes.getRecipes.useQuery();
+  const { data } = api.recetas.getRecipes.useQuery();
 
   return (
     <>
@@ -36,7 +36,7 @@ export default function Home(props) {
               </div>
               <div className="flex flex-col">
                 {Array.isArray(data) ? data.map((recipe) => (
-                  <div key={recipe.id}>{recipe.title}</div>
+                  <div key={recipe.id}>{recipe.titulo}</div>
                 )): null}
               </div>
             </Link>
