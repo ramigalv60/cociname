@@ -20,7 +20,7 @@ model Receta {
   dificultad         Dificultad
   fechaPublicacion   DateTime
   ingredientes       Ingrediente[]
-  categorias         Categoria @relation(fields: [categoriaId], references: [id])
+  categoria         Categoria @relation(fields: [categoriaId], references: [id])
   videos             Video[]
   //comentarios        Comentario[]
   imagen             Imagen[]
