@@ -147,6 +147,10 @@ export const getRecetaBySearch = createTRPCRouter({
         categoria: true,
       },
     });
+
+    if (!recipe) {
+      throw new Error("No recipe found");
+    }
     return recipe;
   }),
 });
