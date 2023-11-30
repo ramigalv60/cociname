@@ -107,6 +107,10 @@ export const getRecetas = createTRPCRouter({
 export const getVideos = createTRPCRouter({
   getVideos: publicProcedure.query(async ({ ctx }) => {
     const videos = await ctx.prisma.video.findMany();
+
+    if (videos.length === 0) {
+      throw new Error("No videos found");
+    }
     return videos; 
   }),
 });
