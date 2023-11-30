@@ -175,32 +175,37 @@ export const getRecetaByCategory = createTRPCRouter({
 
 export const createReceta = createTRPCRouter({
   createReceta: publicProcedure.input(recipeSchema)
-  .mutation(async ({ ctx, input }) => {
-    const recipe = await ctx.prisma.receta.create({
-      data: {
-        titulo: input.titulo,
-        descripcion: input.descripcion,
-        contenido: input.contenido,
-        tiempoPreparacion: input.tiempoPreparacion,
-        dificultad: input.dificultad,
-        fechaPublicacion: input.fechaPublicacion,
-        ingredientes: {
-          create: input.ingredientes,
-        },
-        categoria: {
-          connect: {
-            id: input.categoriaId,
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const recipe = await ctx.prisma.receta.create({
+          data: {
+            titulo: input.titulo,
+            descripcion: input.descripcion,
+            contenido: input.contenido,
+            tiempoPreparacion: input.tiempoPreparacion,
+            dificultad: input.dificultad,
+            fechaPublicacion: input.fechaPublicacion,
+            ingredientes: {
+              create: input.ingredientes,
+            },
+            categoria: {
+              connect: {
+                id: input.categoriaId,
+              },
+            },
+            videos: {
+              create: input.videos,
+            },
+            imagen: {
+              create: input.imagen,
+            },
           },
-        },
-        videos: {
-          create: input.videos,
-        },
-        imagen: {
-          create: input.imagen,
-        },
-      },
-    });
-  }),
+        });
+        return recipe;
+      } catch (error) {
+        throw new Error("Failed to create recipe");
+      }
+    }),
 });
 
 export const updateReceta = createTRPCRouter({
