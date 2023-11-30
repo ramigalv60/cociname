@@ -211,31 +211,37 @@ export const createReceta = createTRPCRouter({
 export const updateReceta = createTRPCRouter({
   updateReceta: publicProcedure.input(recipeSchema)
   .mutation(async ({ ctx, input }) => {
-    const recipe = await ctx.prisma.receta.update({
-      where: { id: input.id },
-      data: {
-        titulo: input.titulo,
-        descripcion: input.descripcion,
-        contenido: input.contenido,
-        tiempoPreparacion: input.tiempoPreparacion,
-        dificultad: input.dificultad,
-        fechaPublicacion: input.fechaPublicacion,
-        ingredientes: {
-          create: input.ingredientes,
-        },
-        categoria: {
-          connect: {
-            id: input.categoriaId,
+    try {
+      const recipe = await ctx.prisma.receta.update({
+        where: { id: input.id },
+        data: {
+          titulo: input.titulo,
+          descripcion: input.descripcion,
+          contenido: input.contenido,
+          tiempoPreparacion: input.tiempoPreparacion,
+          dificultad: input.dificultad,
+          fechaPublicacion: input.fechaPublicacion,
+          ingredientes: {
+            create: input.ingredientes,
+          },
+          categoria: {
+            connect: {
+              id: input.categoriaId,
+            },
+          },
+          videos: {
+            create: input.videos,
+          },
+          imagen: {
+            create: input.imagen,
           },
         },
-        videos: {
-          create: input.videos,
-        },
-        imagen: {
-          create: input.imagen,
-        },
-      },
-    });
+      });
+      return recipe;
+    } catch (error) {
+      console.error("Failed to update recipe:", error);
+      throw new Error("Failed to update recipe");
+    }
   }),
 });
 
