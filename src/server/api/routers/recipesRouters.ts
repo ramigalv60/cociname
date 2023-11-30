@@ -1,10 +1,6 @@
-import { z } from "zod";
-import { PrismaClient, Categoria } from "@prisma/client";
+import { PrismaClient} from "@prisma/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { Router } from "@trpc/server";
-import { v2 as cloudinary } from "cloudinary";
-import { TRPCError } from '@trpc/server';
-import { recipeSchema, ingredientSchema, categorySchema, videoSchema, } from "~/server/schemas";
+import { recipeSchema} from "~/server/schemas";
 
 const prisma = new PrismaClient();
 
@@ -127,53 +123,5 @@ export const deleteReceta = createTRPCRouter({
     console.error("Failed to delete recipe:", error);
     throw new Error("Failed to delete recipe");
   }
-  }),
-});
-
-export const createCategoria = createTRPCRouter({
-  createCategoria: publicProcedure.input(categorySchema)
-  .mutation(async ({ ctx, input }) => {
-    try {
-      const category = await ctx.prisma.categoria.create({
-        data: {
-          nombre: input.nombre,
-        },
-      });
-      return category;
-    } catch (error) {
-      throw new Error("Failed to create category");
-    }
-  }),
-});
-
-export const updateCategoria = createTRPCRouter({
-  updateCategoria: publicProcedure.input(categorySchema)
-  .mutation(async ({ ctx, input }) => {
-    try {
-      const category = await ctx.prisma.categoria.update({
-        where: { id: input.id },
-        data: {
-          nombre: input.nombre,
-        },
-      });
-      return category;
-    } catch (error) {
-      console.error("Failed to update category:", error);
-      throw new Error("Failed to update category");
-    }
-  }),
-});
-
-export const deleteCategoria = createTRPCRouter({
-  deleteCategoria: publicProcedure.input(categorySchema)
-  .mutation(async ({ ctx, input }) => {
-    try {
-      const category = await ctx.prisma.categoria.delete({
-        where: { id: input.id },
-      });
-    } catch (error) {
-      console.error("Failed to delete category:", error);
-      throw new Error("Failed to delete category");
-    }
   }),
 });

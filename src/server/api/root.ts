@@ -1,6 +1,7 @@
 import { get } from "http";
 import { getRecetaBySearch, createReceta, getRecetaByCategory, updateReceta, deleteReceta } from "./routers/recipesRouters";
 import { getRecetas, getCategorias, getIngredientes, getVideos } from "./routers/getRouters";
+import { createCategoria, updateCategoria, deleteCategoria } from "./routers/categoriasRouters";
 import { createTRPCRouter } from "~/server/api/trpc";
 import { de } from "date-fns/locale";
 
@@ -14,11 +15,14 @@ export const appRouter = createTRPCRouter({
   categorias: getCategorias,
   ingredientes: getIngredientes,
   videos: getVideos,
-  recetaBySearch: getRecetaBySearch,
-  getRecetaByCategory: getRecetaByCategory,
-  createReceta: createReceta,
-  updateReceta: updateReceta,
-  deleteReceta: deleteReceta,
+  RecetaPorBusqueda: getRecetaBySearch,
+  RecetaPorCategoria: getRecetaByCategory,
+  crearReceta: createReceta,
+  actualizarReceta: updateReceta,
+  borrarReceta: deleteReceta,
+  crearCategoria: createCategoria,
+  actualizarCategoria: updateCategoria,
+  borrarCategoria: deleteCategoria,
 });
 
 // export type definition of API

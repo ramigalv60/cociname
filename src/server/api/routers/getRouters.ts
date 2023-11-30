@@ -1,10 +1,5 @@
-import { z } from "zod";
-import { PrismaClient, Categoria } from "@prisma/client";
+import { PrismaClient} from "@prisma/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { Router } from "@trpc/server";
-import { v2 as cloudinary } from "cloudinary";
-import { TRPCError } from '@trpc/server';
-import { recipeSchema, ingredientSchema, categorySchema, videoSchema, } from "~/server/schemas";
 
 const prisma = new PrismaClient();
 
