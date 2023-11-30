@@ -118,6 +118,10 @@ export const getVideos = createTRPCRouter({
 export const getIngredientes = createTRPCRouter({
   getIngredients: publicProcedure.query(async ({ ctx }) => {
     const ingredients = await ctx.prisma.ingrediente.findMany();
+
+    if (ingredients.length === 0) {
+      throw new Error("No ingredients found");
+    }
     return ingredients;
   }),
 });
