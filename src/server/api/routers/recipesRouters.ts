@@ -258,3 +258,19 @@ export const deleteReceta = createTRPCRouter({
   }
   }),
 });
+
+export const createCategoria = createTRPCRouter({
+  createCategoria: publicProcedure.input(categorySchema)
+  .mutation(async ({ ctx, input }) => {
+    try {
+      const category = await ctx.prisma.categoria.create({
+        data: {
+          nombre: input.nombre,
+        },
+      });
+      return category;
+    } catch (error) {
+      throw new Error("Failed to create category");
+    }
+  }),
+});
