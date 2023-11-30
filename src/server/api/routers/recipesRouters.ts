@@ -1,6 +1,7 @@
 import { PrismaClient} from "@prisma/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { recipeSchema} from "~/server/schemas";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
@@ -23,9 +24,14 @@ export const getRecetaBySearch = createTRPCRouter({
 });
 
 export const getRecetaByCategory = createTRPCRouter({
-  getRecetaByCategory: publicProcedure.query(async ({ ctx, input }) => {
+  getRecetaByCategory: publicProcedure.input(
+    z.object({
+      id: z.number(),
+    }
+  ))
+    .query(async ({ ctx, input }) => {
     const recipe = await ctx.prisma.receta.findMany({
-      where: { categoriaId: input },
+      where: { categoriaId: input.id },
       include: {
         videos: true,
         imagen: true,
