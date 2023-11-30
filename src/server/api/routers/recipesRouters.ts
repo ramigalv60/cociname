@@ -4,88 +4,9 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { Router } from "@trpc/server";
 import { v2 as cloudinary } from "cloudinary";
 import { TRPCError } from '@trpc/server';
+import { recipeSchema, ingredientSchema, categorySchema, videoSchema, } from "~/server/schemas";
 
 const prisma = new PrismaClient();
-
-// Define the recipe schema using zod
-const recipeSchema = z.object({
-  id: z.number(),
-  titulo: z.string(),
-  descripcion: z.string(),
-  contenido: z.string(),
-  tiempoPreparacion: z.number(),
-  dificultad: z.enum([
-    "Facil",
-    "Medio",
-    "Dificil",
-  ]),
-  fechaPublicacion: z.date(),
-  ingredientes: z.array(
-    z.object({
-      id: z.number(),
-      nombre: z.string(),
-      cantidad: z.number(),
-      unidad: z.enum([
-        "gr", 
-        "kg", 
-        "ml", 
-        "l", 
-        "unidad"
-      ]),
-      recetaId: z.number(),
-    })
-  ),
-  categoria: z.object({
-    id: z.number(),
-    nombre: z.string(),
-  }),
-  videos: z.object({
-      id: z.number(),
-      titulo: z.string(),
-      urlVideo: z.string(),
-      duracion: z.number(),
-      fechaPublicacion: z.date(),
-      recetaId: z.number(),
-    }),
-  imagen: z.array(
-    z.object({
-    id: z.number(),
-    urlImagen: z.string(),
-    recetaId: z.number(),
-  })),
-  categoriaId: z.number(),
-});
-
-// Define the ingredient schema using zod
-const ingredientSchema = z.object({
-  id: z.number(),
-  nombre: z.string(),
-  cantidad: z.number(),
-  unidad: z.nativeEnum({
-    g: "g", 
-    kg: "kg", 
-    ml: "ml", 
-    l: "l", 
-    unidades: "unidades"
-  }),
-  recetaId: z.number(),
-});
-
-// Define the category schema using zod
-const categorySchema = z.object({
-  id: z.number(),
-  nombre: z.string(),
-});
-
-// Define the video schema using zod
-const videoSchema = z.object({
-  id: z.number(),
-  titulo: z.string(),
-  urlVideo: z.string(),
-  duracion: z.number(),
-  fechaPublicacion: z.date(),
-  recetaId: z.number(),
-});
 
 export const getRecetas = createTRPCRouter({
   getRecipes: publicProcedure.query(async ({ ctx }) => {
