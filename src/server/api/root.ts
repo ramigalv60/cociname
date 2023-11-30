@@ -1,5 +1,5 @@
 import { get } from "http";
-import { getRecetas, getCategorias, getIngredientes, getVideos, getRecetaBySearch, createReceta, getRecetaByCategory, updateReceta, deleteReceta } from "./routers/recipes";
+import { getRecetas, getCategorias, getIngredientes, getVideos, getRecetaBySearch, createReceta, getRecetaByCategory, updateReceta, deleteReceta } from "./routers/recipesRouters";
 import { createTRPCRouter } from "~/server/api/trpc";
 import { de } from "date-fns/locale";
 
