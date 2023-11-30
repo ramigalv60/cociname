@@ -8,10 +8,16 @@ import { api } from "~/utils/api";
 import { v2 as cloudinary } from "cloudinary";
 
 export default function Home(props) {
-  const user = useUser();
 
-  const { data } = api.recetas.getRecipes.useQuery();
+  const { data, error, isLoading } = api.RecetaPorCategoria.getRecetaByCategory.useQuery({id: 1});
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
   return (
     <>
       <Head>
@@ -26,10 +32,11 @@ export default function Home(props) {
           </h1>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
               <div className="flex flex-col">
-                {data?.map((receta) => (
-                  <div key={receta.id} className="text-white">{receta.titulo}</div>
+                {data.map((recipe) => (
+                <li key={recipe.id}>{recipe.titulo}</li>
                 ))}
               </div>
+              
           </div>
         </div>
       </main>

@@ -15,15 +15,16 @@ generator client {
 model Receta {
   id                 Int      @id @default(autoincrement())
   titulo             String
-  descripcion        String
+  descripcion        String   @db.VarChar(5000)
+  contenido          String   @db.Text
   tiempoPreparacion  Int
   dificultad         Dificultad
   fechaPublicacion   DateTime
   ingredientes       Ingrediente[]
-  categorias         Categoria @relation(fields: [categoriaId], references: [id])
+  categoria         Categoria @relation(fields: [categoriaId], references: [id])
   videos             Video[]
-  comentarios        Comentario[]
-  imagen             String
+  //comentarios        Comentario[]
+  imagen             Imagen[]
   categoriaId        Int
 
   @@index([categoriaId])
@@ -55,6 +56,7 @@ model Video {
   @@index([recetaId])
 }
 
+//Define el modelo Categoria
 model Categoria{
   id Int @id @default(autoincrement())
   nombre String
@@ -62,15 +64,25 @@ model Categoria{
 
 }
 
-model Comentario{
+//Define el modelo Imagen
+model Imagen{
   id Int @id @default(autoincrement())
-  texto String
-  fecha DateTime
+  urlImagen String
   receta Receta @relation(fields: [recetaId], references: [id])
   recetaId Int
 
   @@index([recetaId])
 }
+
+//model Comentario{
+  //id Int @id @default(autoincrement())
+  //texto String
+  //fecha DateTime
+  //receta Receta @relation(fields: [recetaId], references: [id])
+  //recetaId Int
+
+  //@@index([recetaId])
+//}
 
 enum Dificultad{
   Facil
