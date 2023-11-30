@@ -292,3 +292,17 @@ export const updateCategoria = createTRPCRouter({
     }
   }),
 });
+
+export const deleteCategoria = createTRPCRouter({
+  deleteCategoria: publicProcedure.input(categorySchema)
+  .mutation(async ({ ctx, input }) => {
+    try {
+      const category = await ctx.prisma.categoria.delete({
+        where: { id: input.id },
+      });
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+      throw new Error("Failed to delete category");
+    }
+  }),
+});
