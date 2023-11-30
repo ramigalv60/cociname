@@ -248,8 +248,13 @@ export const updateReceta = createTRPCRouter({
 export const deleteReceta = createTRPCRouter({
   deleteReceta: publicProcedure.input(recipeSchema)
   .mutation(async ({ ctx, input }) => {
+  try {
     const recipe = await ctx.prisma.receta.delete({
       where: { id: input.id },
     });
+  } catch (error) {
+    console.error("Failed to delete recipe:", error);
+    throw new Error("Failed to delete recipe");
+  }
   }),
 });
