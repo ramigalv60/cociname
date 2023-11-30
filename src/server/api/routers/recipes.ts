@@ -96,6 +96,10 @@ export const getRecetas = createTRPCRouter({
       },
     });
 
+    if (recipes.length === 0) {
+      throw new Error("No recipes found");
+    }
+
     return recipes;
   }),
 });
