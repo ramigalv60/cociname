@@ -129,6 +129,10 @@ export const getIngredientes = createTRPCRouter({
 export const getCategorias = createTRPCRouter({
   getCategories: publicProcedure.query(async ({ ctx }) => {
     const categories = await ctx.prisma.categoria.findMany();
+
+    if (categories.length === 0) {
+      throw new Error("No categories found");
+    }
     return categories;
   }),
 });
