@@ -26,9 +26,9 @@ export default function Home(props) {
           </h1>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
               <div className="flex flex-col">
-                {Array.isArray(data) ? data.map((recipe) => (
-                  <div key={recipe.id}>{recipe.titulo}</div>
-                )): null}
+                {data?.map((receta) => (
+                  <div key={(receta.id)}>{receta.titulo}</div>
+                ))}
               </div>
           </div>
         </div>
