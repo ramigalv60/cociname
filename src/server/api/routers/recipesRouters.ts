@@ -274,3 +274,21 @@ export const createCategoria = createTRPCRouter({
     }
   }),
 });
+
+export const updateCategoria = createTRPCRouter({
+  updateCategoria: publicProcedure.input(categorySchema)
+  .mutation(async ({ ctx, input }) => {
+    try {
+      const category = await ctx.prisma.categoria.update({
+        where: { id: input.id },
+        data: {
+          nombre: input.nombre,
+        },
+      });
+      return category;
+    } catch (error) {
+      console.error("Failed to update category:", error);
+      throw new Error("Failed to update category");
+    }
+  }),
+});
